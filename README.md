@@ -1,2 +1,2 @@
 # Netrik
-Network Problem Rectifier App
+Network Analyzer App
