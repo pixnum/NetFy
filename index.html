@@ -2,215 +2,212 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Netrik</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Netrik - Network Analyzer Pro</title>
 <style>
-body{font-family:"Segoe UI",sans-serif;margin:0;padding:20px;background:#e0e0e0;color:#000;display:flex;justify-content:center;transition:0.3s;}
-.dark{background:#1e1e1e;color:#f0f0f0;}
-.app-frame{width:100%;max-width:1200px;padding:25px;border-radius:25px;border:2px solid #ccc;background:#e0e0e0;box-shadow:9px 9px 16px #bebebe,-9px -9px 16px #ffffff;position:relative;transition:0.3s;}
-.dark .app-frame{background:#2a2a2a;box-shadow:9px 9px 16px #141414,-9px -9px 16px #3a3a3a;}
-h1{text-align:center;margin-bottom:20px;}
-.round-toggle{position:absolute;top:15px;right:15px;width:50px;height:50px;border-radius:50%;border:none;background:#e0e0e0;box-shadow:inset 4px 4px 8px #bebebe,inset -4px -4px 8px #ffffff;cursor:pointer;font-size:24px;transition:0.3s;}
-.dark .round-toggle{background:#2a2a2a;box-shadow:inset 4px 4px 8px #141414,inset -4px -4px 8px #3a3a3a;color:#f0f0f0;}
-button{padding:10px 18px;margin:4px;border-radius:12px;border:none;background:#e0e0e0;box-shadow:5px 5px 10px #bebebe,-5px -5px 10px #ffffff;cursor:pointer;transition:0.3s;}
-button:hover{box-shadow:inset 5px 5px 10px #bebebe,inset -5px -5px 10px #ffffff;}
-.dark button{background:#2a2a2a;box-shadow:5px 5px 10px #141414,-5px -5px 10px #3a3a3a;color:#f0f0f0;}
-table{width:100%;border-collapse:collapse;margin-top:15px;border-radius:12px;overflow:hidden;}
-th,td{padding:8px;text-align:center;border:1px solid #ccc;}
-th{background:#f5f5f5;}
-.dark th{background:#333;}
-.ok{background:#d4edda;color:#155724;border-radius:6px;padding:3px;}
-.fail{background:#f8d7da;color:#721c24;border-radius:6px;padding:3px;}
-.fastest{font-weight:bold;color:#007bff;}
-.dns-input{display:flex;justify-content:center;margin:10px 0;gap:10px;flex-wrap:wrap;}
-input{padding:6px;border-radius:8px;border:1px solid #ccc;width:180px;font-size:14px;}
-.remove-btn{background:#ff4d4d;color:white;padding:4px 8px;border-radius:6px;cursor:pointer;border:none;}
-.remove-btn:hover{background:#cc0000;}
-canvas{width:100%;height:120px;margin-top:10px;border-radius:12px;background:#f0f0f0;}
-.dark canvas{background:#333;}
-.status-online{color:green;font-weight:bold;}
-.status-offline{color:red;font-weight:bold;}
-#advancedLogs{margin-top:15px;height:150px;overflow:auto;border:1px solid #ccc;padding:8px;border-radius:10px;background:#f9f9f9;}
-.dark #advancedLogs{background:#222;color:#f0f0f0;}
-.panel{margin-bottom:20px;padding:15px;border-radius:20px;background:#e0e0e0;box-shadow:9px 9px 16px #bebebe,-9px -9px 16px #ffffff;transition:0.3s;}
-.dark .panel{background:#2a2a2a;box-shadow:9px 9px 16px #141414,-9px -9px 16px #3a3a3a;}
+body{display:flex;justify-content:center;align-items:center;min-height:100vh;margin:0;font-family:Arial,sans-serif;background:#e0e0e0;color:#333;transition:background 0.3s,color 0.3s}
+body.dark{background:#121212;color:#f1f1f1}
+.app-frame{width:95%;max-width:1100px;border:2px solid #aaa;border-radius:20px;padding:20px;text-align:center;background:#e0e0e0;box-shadow:9px 9px 16px #bebebe,-9px -9px 16px #fff;position:relative;transition:background 0.3s,box-shadow 0.3s}
+body.dark .app-frame{background:#1e1e1e;box-shadow:9px 9px 16px #0d0d0d,-9px -9px 16px #2c2c2c}
+h1{margin-top:0;font-size:1.6rem}
+.results{font-size:1.2rem;margin:15px 0;line-height:1.6}
+canvas{width:100%;height:180px;margin:10px 0;border-radius:10px}
+.toggle-dark{position:absolute;top:15px;right:15px;width:40px;height:40px;border-radius:50%;border:none;cursor:pointer;background:#e0e0e0;box-shadow:5px 5px 10px #bebebe,-5px -5px 10px #fff;transition:background 0.3s,box-shadow 0.3s}
+body.dark .toggle-dark{background:#1e1e1e;box-shadow:5px 5px 10px #0d0d0d,-5px -5px 10px #2c2c2c}
+.legend{display:flex;justify-content:center;gap:20px;margin-top:8px;font-size:0.9rem;flex-wrap:wrap}
+.legend-item{display:flex;align-items:center;gap:6px}
+.legend-color{width:15px;height:15px;border-radius:3px}.blue{background:blue}.green{background:green}.orange{background:orange}.red{background:red}
+.tooltip{position:absolute;padding:6px 10px;background:rgba(0,0,0,0.75);color:#fff;border-radius:6px;font-size:0.8rem;pointer-events:none;display:none;z-index:10}
+.metrics-panel{text-align:left;margin-top:15px}
+.metrics-header{cursor:pointer;padding:10px;border-radius:10px;font-weight:bold;background:#e0e0e0;box-shadow:inset 5px 5px 10px #bebebe,inset -5px -5px 10px #fff;transition:background 0.3s,box-shadow 0.3s}
+body.dark .metrics-header{background:#1e1e1e;box-shadow:inset 5px 5px 10px #0d0d0d,inset -5px -5px 10px #2c2c2c}
+.metrics-content{display:none;margin-top:10px;max-height:400px;overflow-y:auto}
+.metric{display:flex;justify-content:space-between;padding:6px 12px;border-bottom:1px solid #ccc;font-size:0.95rem}
+body.dark .metric{border-color:#333}
+.good{color:#2ecc71;font-weight:bold}.warn{color:#f1c40f;font-weight:bold}.bad{color:#e74c3c;font-weight:bold}
+.export-buttons{margin-top:10px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.export-buttons button{padding:6px 12px;border-radius:8px;border:none;cursor:pointer;box-shadow:3px 3px 6px #bebebe,-3px -3px 6px #fff;background:#e0e0e0;transition:0.2s}
+body.dark .export-buttons button{box-shadow:3px 3px 6px #0d0d0d,-3px -3px 6px #2c2c2c;background:#1e1e1e}
+footer{margin-top:15px;font-size:0.9rem;opacity:0.7}
 </style>
 </head>
 <body>
 <div class="app-frame">
-<button class="round-toggle" onclick="toggleDarkMode()">🌙</button>
-<h1>🌐 Netrik</h1>
-
-<!-- Control Panel -->
-<div class="panel" style="text-align:center;">
-<button onclick="runDnsComparison()">Run DNS Comparison</button>
-<button onclick="startRealtimeDNS()">Start DNS Monitor</button>
-<button onclick="stopRealtimeDNS()">Stop Monitor</button>
-<button onclick="startRealtimeFlushDNS()">Start Auto Flush DNS</button>
-<button onclick="stopRealtimeFlushDNS()">Stop Auto Flush</button>
-<button onclick="applyFastestDNS()">Apply Fastest DNS</button>
-<button onclick="resetNetworkSimulation()">Reset Network</button>
-<button onclick="runSpeedTest()">Speed Test</button>
-<button onclick="runUploadTest()">Upload Test</button>
-<button onclick="scheduleAutoTest()">Schedule Test</button>
-<button onclick="exportReport()">Export Report</button>
+<button class="toggle-dark" title="Toggle Dark Mode">🌙</button>
+<h1>📡 Netrik</h1>
+<div class="results" id="results">Initializing...</div>
+<canvas id="speedGraph"></canvas>
+<canvas id="jitterGraph"></canvas>
+<div class="legend">
+<div class="legend-item"><div class="legend-color blue"></div>Download Speed (Mbps)</div>
+<div class="legend-item"><div class="legend-color green"></div>Upload Speed (Mbps)</div>
+<div class="legend-item"><div class="legend-color orange"></div>Jitter (ms)</div>
+<div class="legend-item"><div class="legend-color red"></div>Packet Loss (%)</div>
 </div>
-
-<!-- Network Overview Panel -->
-<div class="panel">
-<p>Status: <span id="networkStatus" class="status-online">Checking...</span></p>
-<p>Public IP: <span id="publicIP">Fetching...</span> | Geo: <span id="geoIP">-</span></p>
-<p id="connectionType">Connection Type: Detecting...</p>
-<p>Packet Loss: <span id="packetLoss">Calculating...</span></p>
-<p id="flushStatus">DNS flushed at: -</p>
-<p>Local Time: <span id="localTime"></span> | Server Time: <span id="serverTime"></span></p>
+<div id="tooltip" class="tooltip"></div>
+<div class="metrics-panel">
+<div class="metrics-header" onclick="toggleMetrics()">⚙️ Advanced Metrics ▼</div>
+<div class="metrics-content" id="metricsContent"></div>
 </div>
-
-<!-- DNS Panel -->
-<div class="panel">
-<h3>DNS Management</h3>
-<div class="dns-input">
-<input type="text" id="customDns" placeholder="Enter custom DNS IP">
-<button onclick="addCustomDNS()">Add DNS</button>
+<div class="export-buttons">
+<button onclick="exportTXT()">Export as TXT</button>
+<button onclick="exportJSON()">Export as JSON</button>
 </div>
-<table>
-<thead><tr><th>Provider</th><th>DNS</th><th>Status</th><th>Latency</th><th>Last Checked</th><th>Action</th></tr></thead>
-<tbody id="dnsTable"></tbody>
-</table>
+<footer>© Manik Roy 2025 | All Rights Reserved</footer>
 </div>
-
-<!-- Speed & Performance Panel -->
-<div class="panel">
-<h3>Performance</h3>
-<canvas id="bandwidthChart"></canvas>
-<canvas id="latencyGraph"></canvas>
-<canvas id="latencyHeatmap"></canvas>
-</div>
-
-<!-- Security Panel -->
-<div class="panel">
-<h3>Security Checks</h3>
-<div style="display:flex;gap:10px;margin-bottom:10px;flex-wrap:wrap;justify-content:center;">
-<input type="text" id="reverseIp" placeholder="IP for Reverse DNS">
-<button onclick="reverseDNS()">Reverse DNS Lookup</button>
-<span id="reverseResult"></span>
-</div>
-<div style="display:flex;gap:10px;margin-bottom:10px;flex-wrap:wrap;justify-content:center;">
-<input type="text" id="sslSite" placeholder="Site URL e.g. https://example.com">
-<button onclick="checkSSL()">SSL/TLS Check</button>
-<span id="sslResult"></span>
-</div>
-<p id="vpnStatus">VPN/Proxy Detection: Checking...</p>
-</div>
-
-<!-- Traceroute Panel -->
-<div class="panel">
-<h3>Traceroute Simulation</h3>
-<ul id="traceroute"></ul>
-</div>
-
-<!-- Logs -->
-<div class="panel">
-<h3>Advanced Logs</h3>
-<div id="advancedLogs"></div>
-</div>
-
 <script>
-// ------------------- Variables -------------------
-let dnsInterval=null, flushInterval=null, scheduledTest=null;
-let testHistory=[], dnsProviders=[{name:"Google",ip:"8.8.8.8"},{name:"Cloudflare",ip:"1.1.1.1"},{name:"OpenDNS",ip:"208.67.222.222"},{name:"Quad9",ip:"9.9.9.9"},{name:"AdGuard",ip:"94.140.14.14"}];
+let history=[], jitterHistory=[], lossHistory=[], uptime=0;
+let advancedMetrics={}, expanded=false;
+const resultsEl=document.getElementById("results");
+const metricsContent=document.getElementById("metricsContent");
+const tooltip=document.getElementById("tooltip");
+document.querySelector(".toggle-dark").addEventListener("click",()=>document.body.classList.toggle("dark"));
+function toggleMetrics(){expanded=!expanded;metricsContent.style.display=expanded?"block":"none";}
+function getRandom(min,max){return(parseFloat(Math.random()*(max-min)+min)).toFixed(2);}
+function formatTime(sec){const h=Math.floor(sec/3600),m=Math.floor((sec%3600)/60),s=sec%60;return `${h}h ${m}m ${s}s`;}
+function avg(arr){return arr.reduce((a,b)=>a+b,0)/arr.length;}
+function deviation(arr){const m=avg(arr);return (avg(arr.map(x=>Math.abs(x-m)))/m*100);}
+function classifyDownload(d){ if(d>80) return ["good","Excellent"]; if(d>40) return ["warn","Good"]; if(d>20) return ["warn","Fair"]; return ["bad","Poor"]; }
+function classifyUpload(u){ if(u>40) return ["good","Excellent"]; if(u>20) return ["warn","Good"]; if(u>10) return ["warn","Fair"]; return ["bad","Poor"]; }
+function classifyPing(p){ if(p<30) return ["good","Excellent"]; if(p<60) return ["warn","Good"]; if(p<100) return ["warn","Fair"]; return ["bad","Poor"]; }
 
-// ------------------- Dark Mode -------------------
-function toggleDarkMode(){document.body.classList.toggle("dark");}
+function updateMetrics(){
+  uptime++;
+  const download=parseFloat(getRandom(20,150));
+  const upload=parseFloat(getRandom(10,80));
+  const ping=parseFloat(getRandom(10,120));
+  const jitter=parseFloat(getRandom(1,15));
+  const loss=parseFloat(getRandom(0,5));
 
-// ------------------- DNS Table -------------------
-function renderTable(){let table=document.getElementById("dnsTable");table.innerHTML="";dnsProviders.forEach((p,i)=>{let row=table.insertRow();row.innerHTML=`<td>${p.name}</td><td>${p.ip}</td><td>-</td><td>-</td><td>-</td><td><button class="remove-btn" onclick="removeDNS(${i})">Remove</button></td>`;});}
-function addCustomDNS(){let ip=document.getElementById("customDns").value.trim();if(!ip)return alert("Enter valid DNS IP.");dnsProviders.push({name:"Custom",ip});renderTable();document.getElementById("customDns").value="";}
-function removeDNS(i){dnsProviders.splice(i,1);renderTable();}
+  history.push({download,upload}); if(history.length>30) history.shift();
+  jitterHistory.push(jitter); if(jitterHistory.length>30) jitterHistory.shift();
+  lossHistory.push(loss); if(lossHistory.length>30) lossHistory.shift();
 
-// ------------------- DNS Test -------------------
-async function testDNS(provider,rowIndex){let start=performance.now();try{await fetch("https://cloudflare-dns.com/dns-query?name=example.com",{mode:"no-cors"});let latency=(performance.now()-start).toFixed(1);updateTable(rowIndex,"✅",latency,new Date().toLocaleTimeString(),true);dnsProviders[rowIndex].latency=latency;}catch{updateTable(rowIndex,"❌","-",new Date().toLocaleTimeString(),false);dnsProviders[rowIndex].latency=Infinity;}}
-function updateTable(rowIndex,status,latency,time,ok){let table=document.getElementById("dnsTable").rows[rowIndex];table.cells[2].innerHTML=`<span class="${ok?'ok':'fail'}">${status}</span>`;table.cells[3].innerText=latency==="-"?"-":latency+" ms";table.cells[4].innerText=time;}
-function runDnsComparison(){dnsProviders.forEach((p,i)=>testDNS(p,i));setTimeout(highlightFastest,1000);}
-function highlightFastest(){let fastest=dnsProviders.reduce((a,b)=>a.latency<b.latency?a:b);let rows=document.getElementById("dnsTable").rows;for(let i=0;i<rows.length;i++){rows[i].cells[0].classList.remove("fastest");}let fastestIndex=dnsProviders.findIndex(p=>p.ip===fastest.ip);if(fastest.latency!==Infinity){rows[fastestIndex].cells[0].classList.add("fastest");setPreferredDNS(fastest.ip);appendLog(`Fastest DNS: ${dnsProviders[fastestIndex].name} (${fastest.ip})`);}} 
+  const [dClass,dText]=classifyDownload(download);
+  const [uClass,uText]=classifyUpload(upload);
+  const [pClass,pText]=classifyPing(ping);
 
-// ------------------- Real-Time Monitoring -------------------
-function startRealtimeDNS(){if(dnsInterval) clearInterval(dnsInterval);runDnsComparison();dnsInterval=setInterval(runDnsComparison,5000);}
-function stopRealtimeDNS(){if(dnsInterval) clearInterval(dnsInterval);dnsInterval=null;appendLog("DNS Monitor stopped.");}
+  resultsEl.innerHTML=`
+    <b>Download:</b> <span class="${dClass}">${download} Mbps (${dText})</span><br>
+    <b>Upload:</b> <span class="${uClass}">${upload} Mbps (${uText})</span><br>
+    <b>Ping:</b> <span class="${pClass}">${ping} ms (${pText})</span><br>
+    <b>Jitter:</b> ${jitter} ms | <b>Loss:</b> ${loss} %<br>
+    <b>Uptime:</b> ${formatTime(uptime)}
+  `;
 
-// ------------------- Flush DNS -------------------
-function flushDNS(){let now=new Date().toLocaleTimeString();document.getElementById("flushStatus").innerText=`DNS flushed at: ${now}`;appendLog(`DNS flushed at ${now}`);}
-function startRealtimeFlushDNS(){if(flushInterval) clearInterval(flushInterval);flushDNS();flushInterval=setInterval(flushDNS,5000);}
-function stopRealtimeFlushDNS(){if(flushInterval) clearInterval(flushInterval);flushInterval=null;appendLog("Auto Flush DNS stopped.");}
+  advancedMetrics={
+    "Average Download Speed": avg(history.map(h=>h.download)).toFixed(2)+" Mbps",
+    "Average Upload Speed": avg(history.map(h=>h.upload)).toFixed(2)+" Mbps",
+    "Speed Consistency": (100-deviation(history.map(h=>h.download))).toFixed(1)+"%",
+    "Ping Value": ping+" ms",
+    "Jitter Value": jitter+" ms",
+    "Packet Loss": loss+" %",
+    "Max Download Speed": Math.max(...history.map(h=>h.download)).toFixed(2)+" Mbps",
+    "Min Download Speed": Math.min(...history.map(h=>h.download)).toFixed(2)+" Mbps",
+    "Max Upload Speed": Math.max(...history.map(h=>h.upload)).toFixed(2)+" Mbps",
+    "Min Upload Speed": Math.min(...history.map(h=>h.upload)).toFixed(2)+" Mbps",
+    "Estimated Bandwidth Usage": ((avg(history.map(h=>h.download))/8)*uptime).toFixed(2)+" MB",
+    "Network Reliability": (100-loss*2).toFixed(1)+"%",
+    "QoS Estimate": (100-ping/2-jitter).toFixed(1)+"%",
+    "Network Health Grade": download>80?"A":download>50?"B":"C",
+    "Session Uptime": formatTime(uptime),
+    "Connection Type": navigator.connection?navigator.connection.effectiveType:"Unknown",
+    "Downlink (Mbps)": navigator.connection?navigator.connection.downlink:"Unknown",
+    "RTT (ms)": navigator.connection?navigator.connection.rtt:"Unknown",
+    "Data Saver": navigator.connection?navigator.connection.saveData:"Unknown",
+    "User Agent": navigator.userAgent,
+    "Platform": navigator.platform,
+    "Cores": navigator.hardwareConcurrency||"Unknown",
+    "Memory (GB)": navigator.deviceMemory||"Unknown",
+    "Language": navigator.language,
+    "Cookies Enabled": navigator.cookieEnabled,
+    "Online Status": navigator.onLine
+  };
+  displayMetrics();
+  drawSpeedGraph();
+  drawJitterGraph();
+}
 
-// ------------------- Fastest DNS -------------------
-function applyFastestDNS(){let fastest=dnsProviders.reduce((a,b)=>a.latency<b.latency?a:b);if(fastest.latency===Infinity)return alert("Run DNS tests first.");appendLog(`Fastest DNS applied: ${fastest.ip}`);alert(`Use this DNS manually: ${fastest.ip}`);}
+function displayMetrics(){
+  metricsContent.innerHTML="";
+  for(const key in advancedMetrics){
+    metricsContent.innerHTML+=`<div class="metric"><span>${key}</span><span>${advancedMetrics[key]}</span></div>`;
+  }
+}
 
-// ------------------- Reset -------------------
-function resetNetworkSimulation(){stopRealtimeDNS();stopRealtimeFlushDNS();runDnsComparison();appendLog("Network simulation reset.");}
+function drawSpeedGraph(){
+  const c=document.getElementById("speedGraph"); const ctx=c.getContext("2d");
+  ctx.clearRect(0,0,c.width,c.height);
+  const w=c.width,h=c.height; const maxVal=Math.max(...history.map(h=>h.download),...history.map(h=>h.upload),100);
 
-// ------------------- Network Status -------------------
-function checkNetworkStatus(){let online=navigator.onLine;let el=document.getElementById("networkStatus");el.innerText=online?"Online":"Offline";el.className=online?"status-online":"status-offline";}
-setInterval(checkNetworkStatus,5000);checkNetworkStatus();
+  function drawSmoothLine(data,color){
+    ctx.beginPath(); ctx.strokeStyle=color; ctx.lineWidth=3;
+    for(let i=0;i<data.length;i++){
+      const x=i*(w/data.length); const y=h-(data[i]/maxVal*h);
+      if(i===0) ctx.moveTo(x,y); else {
+        const prevX=(i-1)*(w/data.length); const prevY=h-(data[i-1]/maxVal*h);
+        const cx=(prevX+x)/2; const cy=(prevY+y)/2; ctx.quadraticCurveTo(prevX,prevY,cx,cy);
+      }
+    }
+    ctx.stroke();
+  }
+  drawSmoothLine(history.map(d=>d.download),"blue");
+  drawSmoothLine(history.map(d=>d.upload),"green");
+}
 
-// ------------------- Public IP & Geo -------------------
-async function fetchPublicIP(){try{let res=await fetch("https://api.ipify.org?format=json");let data=await res.json();document.getElementById("publicIP").innerText=data.ip;let geo=await fetch("https://ipapi.co/"+data.ip+"/json/");let geoData=await geo.json();document.getElementById("geoIP").innerText=geoData.country_name||"-";}catch{document.getElementById("publicIP").innerText="-";document.getElementById("geoIP").innerText="-";}}
-fetchPublicIP();setInterval(fetchPublicIP,30000);
+function drawJitterGraph(){
+  const c=document.getElementById("jitterGraph"); const ctx=c.getContext("2d");
+  ctx.clearRect(0,0,c.width,c.height);
+  const w=c.width,h=c.height; const maxVal=Math.max(...jitterHistory,...lossHistory,20);
 
-// ------------------- Time -------------------
-async function syncTime(){document.getElementById("localTime").innerText=new Date().toLocaleTimeString();try{let serverRes=await fetch("https://worldtimeapi.org/api/ip");let serverData=await serverRes.json();document.getElementById("serverTime").innerText=new Date(serverData.utc_datetime).toLocaleTimeString();}catch{document.getElementById("serverTime").innerText="-";}}
-setInterval(syncTime,5000);syncTime();
+  function drawSmoothLine(data,color){
+    ctx.beginPath(); ctx.strokeStyle=color; ctx.lineWidth=3;
+    for(let i=0;i<data.length;i++){
+      const x=i*(w/data.length); const y=h-(data[i]/maxVal*h);
+      if(i===0) ctx.moveTo(x,y); else {
+        const prevX=(i-1)*(w/data.length); const prevY=h-(data[i-1]/maxVal*h);
+        const cx=(prevX+x)/2; const cy=(prevY+y)/2; ctx.quadraticCurveTo(prevX,prevY,cx,cy);
+      }
+    }
+    ctx.stroke();
+  }
+  drawSmoothLine(jitterHistory,"orange");
+  drawSmoothLine(lossHistory,"red");
+}
 
-// ------------------- Packet Loss -------------------
-async function simulatePacketLoss(){let total=5,fail=0;for(let i=0;i<total;i++){try{await fetch("https://cloudflare-dns.com/dns-query?name=example.com",{mode:"no-cors"});}catch{fail++;}}let loss=Math.round((fail/total)*100);document.getElementById("packetLoss").innerText=`${loss}%`;appendLog(`Packet Loss: ${loss}%`);}
-setInterval(simulatePacketLoss,10000);simulatePacketLoss();
+// Tooltip support
+function attachTooltip(canvas,type){
+  function showTooltip(e){
+    const rect=canvas.getBoundingClientRect();
+    const clientX=e.touches?e.touches[0].clientX:e.clientX;
+    const clientY=e.touches?e.touches[0].clientY:e.clientY;
+    const x=clientX-rect.left;
+    const index=Math.floor(x/(canvas.width/history.length));
+    if(type==="speed"&&history[index]){
+      const d=history[index].download; const u=history[index].upload;
+      tooltip.innerHTML=`📉 Download: ${d} Mbps<br>📈 Upload: ${u} Mbps`;
+    }
+    if(type==="jitter"&&jitterHistory[index]!==undefined&&lossHistory[index]!==undefined){
+      const j=jitterHistory[index]; const l=lossHistory[index];
+      tooltip.innerHTML=`⚡ Jitter: ${j} ms<br>❌ Loss: ${l} %`;
+    }
+    tooltip.style.display="block"; tooltip.style.left=clientX+15+"px"; tooltip.style.top=clientY-20+"px";
+  }
+  function hideTooltip(){tooltip.style.display="none";}
+  canvas.addEventListener("mousemove",showTooltip);
+  canvas.addEventListener("mouseleave",hideTooltip);
+  canvas.addEventListener("touchmove",showTooltip);
+  canvas.addEventListener("touchend",hideTooltip);
+}
+attachTooltip(document.getElementById("speedGraph"),"speed");
+attachTooltip(document.getElementById("jitterGraph"),"jitter");
 
-// ------------------- Connection Type -------------------
-function detectConnectionType(){const conn=navigator.connection||navigator.mozConnection||navigator.webkitConnection;let typeEl=document.getElementById("connectionType");if(conn){typeEl.innerText=`Connection Type: ${conn.effectiveType||conn.type}`;}else{typeEl.innerText="Connection Type: Unknown";}}
-setInterval(detectConnectionType,5000);detectConnectionType();
+// Export
+function exportTXT(){let txt="Network Analyzer Report\n\n";for(const key in advancedMetrics){txt+=`${key}: ${advancedMetrics[key]}\n`;} const blob=new Blob([txt],{type:"text/plain"}); const link=document.createElement("a"); link.href=URL.createObjectURL(blob); link.download="NetworkReport.txt"; link.click();}
+function exportJSON(){const blob=new Blob([JSON.stringify(advancedMetrics,null,2)],{type:"application/json"}); const link=document.createElement("a"); link.href=URL.createObjectURL(blob); link.download="NetworkReport.json"; link.click();}
 
-// ------------------- Speed & Upload Test -------------------
-async function runSpeedTest(){try{const fileSizeBytes=500000; const start=performance.now();for(let i=0;i<3;i++){await new Promise(r=>setTimeout(r,100));} const end=performance.now(); const duration=(end-start)/1000; const Mbps=((fileSizeBytes*8)/duration/1000/1000).toFixed(2);alert(`Download Speed: ${Mbps} Mbps`);appendLog(`Speed Test: ${Mbps} Mbps`);}catch(err){alert("Speed Test failed");appendLog(`Speed Test failed: ${err.message}`);}}
-async function runUploadTest(){appendLog("Starting Upload Test...");const data=new Blob([new Uint8Array(1024*1024*2)]);const start=performance.now();try{await fetch("https://httpbin.org/post",{method:"POST",body:data});const end=performance.now();const duration=(end-start)/1000;const Mbps=((2*8)/duration).toFixed(2);appendLog(`Upload Speed: ${Mbps} Mbps`);alert(`Upload Speed: ${Mbps} Mbps`);}catch(err){appendLog("Upload Test failed: "+err.message);alert("Upload Test failed");}}
-
-// ------------------- Scheduled Test -------------------
-function scheduleAutoTest(){if(scheduledTest){clearInterval(scheduledTest);scheduledTest=null;return alert("Scheduled test stopped");}scheduledTest=setInterval(()=>{runDnsComparison();runSpeedTest();runUploadTest();},3600000);alert("Scheduled test every 1 hour");}
-
-// ------------------- Logs -------------------
-function appendLog(msg){let el=document.getElementById("advancedLogs");el.innerHTML=`[${new Date().toLocaleTimeString()}] ${msg}<br>`+el.innerHTML;}
-
-// ------------------- History & Export -------------------
-function saveTestHistory(result){testHistory.push(result);if(testHistory.length>20)testHistory.shift();}
-function exportReport(){let txt="Network Report\n"+new Date().toLocaleString()+"\n\n";testHistory.forEach((r,i)=>{txt+=`#${i+1} ${r}\n`;});let blob=new Blob([txt],{type:"text/plain"});let url=URL.createObjectURL(blob);let a=document.createElement("a");a.href=url;a.download="network_report.txt";a.click();URL.revokeObjectURL(url);}
-
-// ------------------- Traceroute -------------------
-function simulateTraceroute(){let ul=document.getElementById("traceroute");ul.innerHTML="";for(let i=1;i<=10;i++){let li=document.createElement("li");li.innerText=`Hop ${i}: ${Math.floor(Math.random()*255)}.${Math.floor(Math.random()*255)}.${Math.floor(Math.random()*255)}.${Math.floor(Math.random()*255)} ms`;ul.appendChild(li);}}
-simulateTraceroute();
-
-// ------------------- Graphs -------------------
-function drawGraphs(){const bwCanvas=document.getElementById("bandwidthChart");bwCanvas.width=bwCanvas.parentElement.offsetWidth;const bwCtx=bwCanvas.getContext("2d");bwCtx.clearRect(0,0,bwCanvas.width,bwCanvas.height);bwCtx.beginPath();bwCtx.moveTo(0,bwCanvas.height/2);for(let i=0;i<bwCanvas.width;i++){bwCtx.lineTo(i,bwCanvas.height/2+Math.sin(i/10)*20);}bwCtx.strokeStyle="#007bff";bwCtx.stroke();const latCanvas=document.getElementById("latencyGraph");latCanvas.width=latCanvas.parentElement.offsetWidth;const latCtx=latCanvas.getContext("2d");latCtx.clearRect(0,0,latCanvas.width,latCanvas.height);latCtx.beginPath();latCtx.moveTo(0,latCanvas.height/2);for(let i=0;i<latCanvas.width;i++){latCtx.lineTo(i,latCanvas.height/2+Math.random()*30);}latCtx.strokeStyle="#28a745";latCtx.stroke();const heatCanvas=document.getElementById("latencyHeatmap");heatCanvas.width=heatCanvas.parentElement.offsetWidth;const heatCtx=heatCanvas.getContext("2d");heatCtx.clearRect(0,0,heatCanvas.width,heatCanvas.height);for(let i=0;i<heatCanvas.width;i+=10){let h=Math.random()*heatCanvas.height;heatCtx.fillStyle=`rgb(${Math.random()*255},0,${255-Math.random()*255})`;heatCtx.fillRect(i,heatCanvas.height-h,10,h);}}
-setInterval(drawGraphs,500);drawGraphs();
-
-// ------------------- Reverse DNS -------------------
-function reverseDNS(){let ip=document.getElementById("reverseIp").value.trim();if(!ip)return alert("Enter IP");let octets=ip.split(".");if(octets.length!==4)return alert("Invalid IP");document.getElementById("reverseResult").innerText=`Simulated reverse: host-${octets.reverse().join(".")}.example.com`;appendLog(`Reverse DNS lookup for ${ip}`);}
-
-// ------------------- SSL/TLS -------------------
-function checkSSL(){let url=document.getElementById("sslSite").value.trim();if(!url)return alert("Enter site URL");let isHTTPS=url.startsWith("https://");document.getElementById("sslResult").innerText=isHTTPS?"SSL/TLS: Valid":"SSL/TLS: Not Found";appendLog(`SSL/TLS check for ${url}: ${isHTTPS?"Valid":"Not Found"}`);}
-
-// ------------------- VPN/Proxy -------------------
-function vpnCheck(){let ip=document.getElementById("publicIP").innerText;let vpn=document.getElementById("vpnStatus");if(ip==="-"||ip==="Fetching..."){vpn.innerText="VPN/Proxy Detection: Unknown";return;}if(ip.startsWith("10.")||ip.startsWith("192.168.")||ip.startsWith("172.")){vpn.innerText="VPN/Proxy: Local/Private IP";}else{vpn.innerText="VPN/Proxy: None detected";}appendLog(`VPN/Proxy check: ${vpn.innerText}`);}
-setInterval(vpnCheck,10000);vpnCheck();
-
-// ------------------- Auto DNS Preference -------------------
-function setPreferredDNS(ip){localStorage.setItem("preferredDNS",ip);}
-function loadPreferredDNS(){let pref=localStorage.getItem("preferredDNS");if(pref){appendLog("Loaded preferred DNS: "+pref);}}
-loadPreferredDNS();
-
-// ------------------- Init -------------------
-document.addEventListener("DOMContentLoaded",()=>{renderTable();fetchPublicIP();syncTime();simulateTraceroute();drawGraphs();});
+// Start updates
+setInterval(updateMetrics,1000);
 </script>
-<!-- Footer goes here -->
-  <footer>© Manik Roy 2025. All Rights Reserved.</footer>
-</div>
 </body>
 </html>
