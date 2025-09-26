@@ -1,2 +1,2 @@
-# Netrik
+# NetFy
 Network Analyzer App
